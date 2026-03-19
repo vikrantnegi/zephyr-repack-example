@@ -15,6 +15,7 @@
     "test": "nx jest:test --passWithNoTests",
     "lint": "nx eslint:lint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc",
+    "bundle": "pnpm bundle:ios && pnpm bundle:android",
     "bundle:ios": "rnef bundle --platform ios --entry-file index.js --dev false",
     "bundle:android": "rnef bundle --platform android --entry-file index.js --dev false",
     "pods": "(cd ios && bundle install && bundle exec pod install)",

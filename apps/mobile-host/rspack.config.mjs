@@ -27,6 +27,29 @@ const USE_ZEPHYR = Boolean(process.env.ZC);
  */
 const config = env => {
   const {mode, platform} = env;
+
+  // Configure remotes based on whether we're using Zephyr Cloud or local development
+  const getRemotes = () => {
+    if (USE_ZEPHYR) {
+      // In Zephyr mode, the withZephyr() wrapper will automatically resolve remote URLs
+      // from Zephyr Cloud, so we use placeholder URLs that will be replaced
+      return {
+        MobileCart: `MobileCart@http://localhost:9000/${platform}/MobileCart.container.js.bundle`,
+        MobileInventory: `MobileInventory@http://localhost:9001/${platform}/MobileInventory.container.js.bundle`,
+        MobileCheckout: `MobileCheckout@http://localhost:9002/${platform}/MobileCheckout.container.js.bundle`,
+        MobileOrders: `MobileOrders@http://localhost:9003/${platform}/MobileOrders.container.js.bundle`,
+      };
+    } else {
+      // Local development mode - use localhost URLs
+      return {
+        MobileCart: `MobileCart@http://localhost:9000/${platform}/MobileCart.container.js.bundle`,
+        MobileInventory: `MobileInventory@http://localhost:9001/${platform}/MobileInventory.container.js.bundle`,
+        MobileCheckout: `MobileCheckout@http://localhost:9002/${platform}/MobileCheckout.container.js.bundle`,
+        MobileOrders: `MobileOrders@http://localhost:9003/${platform}/MobileOrders.container.js.bundle`,
+      };
+    }
+  };
+
   return {
     mode,
     context: __dirname,
@@ -48,12 +71,7 @@ const config = env => {
       new Repack.plugins.ModuleFederationPluginV2({
         name: 'MobileHost',
         dts: false,
-        remotes: {
-          MobileCart: `MobileCart@http://localhost:9000/${platform}/MobileCart.container.js.bundle`,
-          MobileInventory: `MobileInventory@http://localhost:9001/${platform}/MobileInventory.container.js.bundle`,
-          MobileCheckout: `MobileCheckout@http://localhost:9002/${platform}/MobileCheckout.container.js.bundle`,
-          MobileOrders: `MobileOrders@http://localhost:9003/${platform}/MobileOrders.container.js.bundle`,
-        },
+        remotes: getRemotes(),
         shared: getSharedDependencies({eager: true}),
       }),
       new rspack.IgnorePlugin({

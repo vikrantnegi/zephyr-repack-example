@@ -29,6 +29,21 @@ const USE_ZEPHYR = Boolean(process.env.ZC);
 const config = env => {
   const {mode, platform} = env;
 
+  // Configure remotes based on whether we're using Zephyr Cloud or local development
+  const getRemotes = () => {
+    if (USE_ZEPHYR) {
+      // In Zephyr mode, the withZephyr() wrapper will automatically resolve remote URLs
+      return {
+        MobileCheckout: `MobileCheckout@http://localhost:9002/${platform}/MobileCheckout.container.js.bundle`,
+      };
+    } else {
+      // Local development mode
+      return {
+        MobileCheckout: `MobileCheckout@http://localhost:9002/${platform}/MobileCheckout.container.js.bundle`,
+      };
+    }
+  };
+
   return {
     mode,
     context: __dirname,
@@ -51,9 +66,7 @@ const config = env => {
         name: 'MobileCart',
         filename: 'MobileCart.container.js.bundle',
         dts: false,
-        remotes: {
-          MobileCheckout: `MobileCheckout@http://localhost:9002/${platform}/MobileCheckout.container.js.bundle`,
-        },
+        remotes: getRemotes(),
         exposes: STANDALONE
           ? undefined
           : {
